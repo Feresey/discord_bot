@@ -6,12 +6,12 @@ use cairo::{Context, Format, ImageSurface};
 use std::f64::consts;
 use std::fs::File;
 
-struct rectangle {
+struct Rectangle {
     pub top_left: (f64, f64),
     pub bottom_right: (f64, f64),
 }
 
-impl rectangle {
+impl Rectangle {
     pub fn draw(self: &Self, ctx: &Context) {
         let circle_width = 10.0;
 
@@ -87,7 +87,7 @@ fn main() {
     let top_margin = 13.0;
     let border_margin = 20.0;
 
-    let person_box = rectangle {
+    let person_box = Rectangle {
         top_left: (border_margin, top_margin),
         bottom_right: (490.0, 140.0),
     };
@@ -109,11 +109,16 @@ fn main() {
         );
     };
 
-    circle(0);
-    circle(1);
-    circle(2);
-    circle(3);
-    circle(4);
+    for i in 0..5 {
+        circle(i);
+    }
+
+    let pvp_box = Rectangle {
+        top_left: (person_box.top_left.0, person_box.bottom_right.1 + 10.0),
+        bottom_right: (417.0, 597.0),
+    };
+
+    pvp_box.draw(&ctx);
 
     // draw_circle(&ctx, (693.0+63.5, 83.0), 63.5);
 
