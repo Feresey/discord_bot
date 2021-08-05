@@ -61,6 +61,11 @@ impl Rectangle {
     }
 }
 
+struct TextBox {
+    pub top_left: (f64, f64),
+    pub bottom_right: (f64, f64),
+}
+
 fn draw_circle(ctx: &Context, coord: (f64, f64), radius: f64) {
     ctx.arc(coord.0, coord.1, radius, 0.0, 2.0 * consts::PI);
     ctx.stroke();
@@ -119,6 +124,20 @@ fn main() {
     };
 
     pvp_box.draw(&ctx);
+
+    let pve_box = Rectangle {
+        top_left: (450.0, pvp_box.top_left.1),
+        bottom_right: (858.0, 290.0),
+    };
+
+    pve_box.draw(&ctx);
+
+    let coop_box = Rectangle {
+        top_left: (892.0, pvp_box.top_left.1),
+        bottom_right: (1165.0, pve_box.bottom_right.1),
+    };
+
+    coop_box.draw(&ctx);
 
     // draw_circle(&ctx, (693.0+63.5, 83.0), 63.5);
 
