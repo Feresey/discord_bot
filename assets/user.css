@@ -1,0 +1,52 @@
+.name-box {
+    grid-row: 1;
+    grid-column: 1;
+
+    display: grid;
+    width: 500px;
+    grid-template-columns: 1fr 10px 3fr;
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.clan {
+    grid-area: 1 / 1 / 6 / 2;
+}
+
+.name-box .delimiter-v {
+    grid-area: 1 / 2 / 6 / 3;
+    border: 0;
+    width: 5px;
+    margin-left: -4px;
+    position: relative;
+    background-image: linear-gradient(to bottom, transparent, #CCC, transparent);
+}
+
+.name-box > .delimiter-h {
+    grid-area: 4 / 3 / 5 / 6;
+    border: 0;
+    background-image: linear-gradient(to right, transparent, #CCC, transparent);
+    position: relative;
+}
+
+.nickname {
+    grid-area: 1 / 3 / 2 / 6;
+}
+
+.karma {
+    grid-area: 3 / 3 / 4 / 6;
+}
+
+.clan-tag {
+    grid-area: 2 / 3 / 3 / 6;
+    background: transparent;
+    border-radius: 10px;
+    height: 5px;
+    /* width: 255px; */
+    box-shadow: 0 55px 0 0 white;
+}
+
+.underline-text {
+    grid-area: 5 / 3 / 6 / 6;
+}

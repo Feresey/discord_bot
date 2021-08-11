@@ -1,0 +1,43 @@
+.pvp-box {
+    width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 10px 1fr;
+    grid-template-rows: repeat(8, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.pvp-box .title {
+    grid-area: 1 / 1 / 2 / 4;
+    font-weight: bold;
+    font-size: 30;
+    text-align: center;
+    background: transparent;
+    border-radius: 10px;
+    height: 5px;
+    margin-bottom: 55px;
+    box-shadow: 0 45px 0 0px white;
+}
+
+.pvp-box .left {
+    grid-area: 2 / 1 / 9 / 2;
+}
+
+.pvp-box .right {
+    grid-area: 2 / 3 / 9 / 4;
+}
+
+.pvp-box .delimiter-v {
+    grid-area: 2 / 2 / 9 / 3;
+}
+
+.pvp-box>div>div {
+    /* font-weight: bold;
+    font-size: 30; */
+    text-align: center;
+    background: transparent;
+    border-radius: 10px;
+    height: 2px;
+    /* margin-bottom: px; */
+    box-shadow: 0 25px 0 0px white;
+}

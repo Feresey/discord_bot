@@ -1,0 +1,35 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+p span {
+    display: block;
+}
+
+div[class*="box"] div {
+    display: grid;
+}
+
+div[class*="box"] {
+    color: white;
+    background: #000000;
+    padding: 10px;
+    border: 2px solid white;
+    /* margin-top: 20;
+    margin-bottom: 20;
+    margin-left: 10;
+    margin-right: 10; */
+    border-radius: 25px;
+}
+
+.grid {
+    display: grid;
+    grid-area: unset;
+    float: left;
+    /* grid-auto-columns: minmax(500px,min-content);
+    grid-auto-rows: min-content; */
+    grid-gap: 20px;
+    /* width: 1100px;
+    height: 600px; */
+}
