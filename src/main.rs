@@ -1,150 +1,106 @@
-extern crate cairo;
-extern crate rand;
-
-use cairo::{Context, Format, ImageSurface};
-
-use std::f64::consts;
+// extern crate rand;
+use askama::Template;
+use wkhtmltopdf::*;
+// use std::f64::consts;
 use std::fs::File;
+use std::io::prelude::*;
 
-struct Rectangle {
-    pub top_left: (f64, f64),
-    pub bottom_right: (f64, f64),
+#[derive(Template)]
+#[template(path = "body.html")]
+struct BaseTemplate {
+    user: User,
+    pvp: PVP,
+    text: Text,
 }
 
-impl Rectangle {
-    pub fn draw(self: &Self, ctx: &Context) {
-        let circle_width = 10.0;
-
-        let draw_circle_part = |coord: (f64, f64), rotate_num: i32| {
-            let offset_mult = match rotate_num {
-                2 => (1.0, 1.0),
-                3 => (-1.0, 1.0),
-                4 => (-1.0, -1.0),
-                5 => (1.0, -1.0),
-                _ => (0.0, 0.0),
-            };
-            ctx.arc(
-                coord.0 + circle_width * offset_mult.0,
-                coord.1 + circle_width * offset_mult.1,
-                circle_width,
-                (rotate_num as f64) * 0.5 * consts::PI,
-                (rotate_num as f64 + 1.0) * 0.5 * consts::PI,
-            );
-        };
-
-        draw_circle_part(self.top_left, 2);
-
-        let coord = (self.bottom_right.0, self.top_left.1);
-        ctx.line_to(coord.0 - circle_width, coord.1);
-        draw_circle_part(coord, 3);
-
-        ctx.line_to(self.bottom_right.0, self.bottom_right.1 - circle_width);
-        draw_circle_part(self.bottom_right, 4);
-
-        let coord = (self.top_left.0, self.bottom_right.1);
-        ctx.line_to(coord.0 + circle_width, coord.1);
-        draw_circle_part(coord, 5);
-
-        ctx.line_to(self.top_left.0, self.top_left.1 + circle_width);
-
-        ctx.stroke();
-
-        // ctx.set_source_rgb(1.0, 0.0, 0.0);
-
-        // ctx.line_to(self.top_left.0, self.top_left.1);
-        // ctx.line_to(self.bottom_right.0, self.top_left.1);
-        // ctx.line_to(self.bottom_right.0, self.bottom_right.1);
-        // ctx.line_to(self.top_left.0, self.bottom_right.1);
-        // ctx.line_to(self.top_left.0, self.top_left.1);
-
-        // ctx.stroke();
-    }
+struct User {
+    name: String,
+    clan: String,
+    clan_tag: String,
+    karma: i32,
 }
 
-struct TextBox {
-    pub top_left: (f64, f64),
-    pub bottom_right: (f64, f64),
+struct Text {
+    total_battles: String,
+    pvp_time: String,
+    winrate: String,
+    kd: String,
+    avg_kills: String,
 }
 
-fn draw_circle(ctx: &Context, coord: (f64, f64), radius: f64) {
-    ctx.arc(coord.0, coord.1, radius, 0.0, 2.0 * consts::PI);
-    ctx.stroke();
-}
+struct PVP {
+    total_battles: i32,
+    total_wins: i32,
+    total_kills: i32,
+    total_deaths: i32,
+    total_damage: f32,
+    total_heal: f32,
+    total_assists: f32,
+    total_time: String,
 
+    winrate: f32,
+    kd: f32,
+    avg_kills: f32,
+    avg_deaths: f32,
+    avg_assists: f32,
+    avg_damage: f32,
+    avg_heal: f32,
+}
 fn main() {
-    let width = 1180;
-    let height = 628;
+    let s = BaseTemplate {
+        user: User {
+            name: "name".to_string(),
+            clan: "clan".to_string(),
+            clan_tag: "tag".to_string(),
+            karma: 32,
+        },
+        pvp: PVP {
+            total_battles: 32,
+            total_wins: 32,
+            total_kills: 123,
+            total_deaths: 123,
+            total_damage: 123.0,
+            total_assists: 123.0,
+            total_time: "total_time".to_string(),
+            total_heal: 32.0,
 
-    let surface = ImageSurface::create(Format::ARgb32, width, height).expect("create surface");
-    let ctx = Context::new(&surface);
-
-    ctx.set_source_rgb(0.0, 0.0, 0.0);
-    ctx.paint();
-
-    // change coordinates
-    // ctx.translate(40.0, 27.0);
-
-    ctx.set_source_rgb(1.0, 1.0, 1.0);
-    ctx.set_line_width(4.0);
-
-    let circle_r = 60.0;
-    let circles_offset = 15.0;
-    let top_margin = 13.0;
-    let border_margin = 20.0;
-
-    let person_box = Rectangle {
-        top_left: (border_margin, top_margin),
-        bottom_right: (490.0, 140.0),
+            winrate: 32.0,
+            kd: 32.0,
+            avg_kills: 32.0,
+            avg_deaths: 32.0,
+            avg_assists: 32.0,
+            avg_damage: 32.0,
+            avg_heal: 32.0,
+        },
+        text: Text {
+            total_battles: "Total battles".to_string(),
+            pvp_time: "PVP time".to_string(),
+            winrate: "Winrate".to_string(),
+            kd: "K/D".to_string(),
+            avg_kills: "AVG kills".to_string(),
+        },
     };
 
-    person_box.draw(&ctx);
+    let res = s.render().unwrap();
+    println!("{}", res);
 
-    let circle = |num: i32| {
-        let x_offset = person_box.bottom_right.0
-            + circles_offset
-            + circle_r
-            + num as f64 * (circles_offset + 2.0 * circle_r);
-        draw_circle(
-            &ctx,
-            (
-                x_offset,
-                top_margin + (person_box.bottom_right.1 - person_box.top_left.1) / 2.0,
-            ),
-            circle_r,
-        );
-    };
+    let mut out = File::create("out.html").unwrap();
+    out.write_all(res.as_bytes()).unwrap();
 
-    for i in 0..5 {
-        circle(i);
+    let pdf_app = PdfApplication::new().expect("init pdf application");
+    unsafe {
+        let mut pfd_out = pdf_app
+            .builder()
+            .orientation(Orientation::Landscape)
+            .margin(Size::Millimeters(7))
+            // .object_setting(
+            //     "web.userStyleSheet",
+            //     "file:///home/lol/work/discord_bot/templates/css/style.css".to_string(),
+            // )
+            .build_from_html(res)
+            // .build_from_url("file:///home/lol/work/discord_bot/out.html".parse().unwrap())
+            .expect("failed to build pdf");
+
+        pfd_out.save("out.pdf").unwrap();
     }
-
-    let pvp_box = Rectangle {
-        top_left: (person_box.top_left.0, person_box.bottom_right.1 + 10.0),
-        bottom_right: (417.0, 597.0),
-    };
-
-    pvp_box.draw(&ctx);
-
-    let pve_box = Rectangle {
-        top_left: (450.0, pvp_box.top_left.1),
-        bottom_right: (858.0, 290.0),
-    };
-
-    pve_box.draw(&ctx);
-
-    let coop_box = Rectangle {
-        top_left: (892.0, pvp_box.top_left.1),
-        bottom_right: (1165.0, pve_box.bottom_right.1),
-    };
-
-    coop_box.draw(&ctx);
-
-    // draw_circle(&ctx, (693.0+63.5, 83.0), 63.5);
-
-    // ctx.set_line_width(4.0);
-    // ctx.arc(0.0, 0.0, 10.0, consts::PI, 1.5 * consts::PI);
-    // ctx.stroke();
-
-    let mut file = File::create("output.png").expect("create file failed");
-    surface.write_to_png(&mut file).expect("write to file");
 }
